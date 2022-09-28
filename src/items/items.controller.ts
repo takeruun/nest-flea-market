@@ -11,7 +11,7 @@ export class ItemsController {
 
   // HTTP メソッド デコレーターをつける
   @Get()
-  findAll() {
+  findAll(): Item[] {
     return this.itemsService.findAll();
   }
 
