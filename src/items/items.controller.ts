@@ -1,4 +1,6 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ItemStatus } from './item-status.enum';
+import { Item } from './items.model';
 import { ItemsService } from './items.service';
 
 // @Controller('xxx') デコレーターをつける
@@ -11,5 +13,24 @@ export class ItemsController {
   @Get()
   findAll() {
     return this.itemsService.findAll();
+  }
+
+  @Post()
+  create(
+    @Body('id') id: string,
+    @Body('name') name: string,
+    @Body('price') price: number,
+    @Body('describe') describe: string,
+  ): Item {
+    const item: Item = {
+      id,
+      name,
+      price,
+      describe,
+      status: ItemStatus.ON_SALE,
+    };
+    console.log(item);
+
+    return this.itemsService.create(item);
   }
 }
