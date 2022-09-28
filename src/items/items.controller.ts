@@ -4,11 +4,11 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
 } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
-import { ItemStatus } from './item-status.enum';
 import { Item } from './items.model';
 import { ItemsService } from './items.service';
 
@@ -25,8 +25,9 @@ export class ItemsController {
   }
 
   // /items/:id でパスを指定する
+  // パラメータにバリデーションを設定する。@Param の第二引数に設定する。
   @Get(':id')
-  findById(@Param('id') id: string): Item {
+  findById(@Param('id', ParseUUIDPipe) id: string): Item {
     return this.itemsService.findById(id);
   }
 
@@ -55,12 +56,12 @@ export class ItemsController {
   }
 
   @Patch(':id')
-  updateStatus(@Param('id') id: string): Item {
+  updateStatus(@Param('id', ParseUUIDPipe) id: string): Item {
     return this.itemsService.updateStatus(id);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string): void {
+  delete(@Param('id', ParseUUIDPipe) id: string): void {
     this.itemsService.delete(id);
   }
 }
