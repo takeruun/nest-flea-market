@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { ItemStatus } from './item-status.enum';
 import { Item } from './items.model';
 import { ItemsService } from './items.service';
@@ -15,6 +15,12 @@ export class ItemsController {
     return this.itemsService.findAll();
   }
 
+  // /items/:id でパスを指定する
+  @Get(':id')
+  findById(@Param('id') id: string): Item {
+    return this.itemsService.findById(id);
+  }
+
   @Post()
   create(
     @Body('id') id: string,
@@ -29,7 +35,6 @@ export class ItemsController {
       describe,
       status: ItemStatus.ON_SALE,
     };
-    console.log(item);
 
     return this.itemsService.create(item);
   }
