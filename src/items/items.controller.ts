@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
+import { CreateItemDto } from './dto/create-item.dto';
 import { ItemStatus } from './item-status.enum';
 import { Item } from './items.model';
 import { ItemsService } from './items.service';
@@ -29,22 +30,28 @@ export class ItemsController {
     return this.itemsService.findById(id);
   }
 
-  @Post()
-  create(
-    @Body('id') id: string,
-    @Body('name') name: string,
-    @Body('price') price: number,
-    @Body('describe') describe: string,
-  ): Item {
-    const item: Item = {
-      id,
-      name,
-      price,
-      describe,
-      status: ItemStatus.ON_SALE,
-    };
+  // @Post()
+  // create(
+  //   @Body('id') id: string,
+  //   @Body('name') name: string,
+  //   @Body('price') price: number,
+  //   @Body('describe') describe: string,
+  // ): Item {
+  //   const item: Item = {
+  //     id,
+  //     name,
+  //     price,
+  //     describe,
+  //     status: ItemStatus.ON_SALE,
+  //   };
 
-    return this.itemsService.create(item);
+  //   return this.itemsService.create(item);
+  // }
+
+  // DTO を使用するバージョン
+  @Post()
+  create(@Body() createItemDto: CreateItemDto): Item {
+    return this.itemsService.create(createItemDto);
   }
 
   @Patch(':id')
