@@ -1,10 +1,12 @@
 import { Module } from '@nestjs/common';
 import { ItemsModule } from './items/items.module';
 import { DatabaseModule } from './db/database.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     ItemsModule,
     DatabaseModule,
+    AuthModule,
     // ormconfig.js　でDB接続設定は読み込む
     // TypeOrmModule.forRoot({
     //   type: 'postgres',
