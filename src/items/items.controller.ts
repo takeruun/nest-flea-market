@@ -20,14 +20,14 @@ export class ItemsController {
 
   // HTTP メソッド デコレーターをつける
   @Get()
-  findAll(): Item[] {
-    return this.itemsService.findAll();
+  async findAll(): Promise<Item[]> {
+    return await this.itemsService.findAll();
   }
 
   // /items/:id でパスを指定する
   // パラメータにバリデーションを設定する。@Param の第二引数に設定する。
   @Get(':id')
-  findById(@Param('id', ParseUUIDPipe) id: string): Item {
+  async findById(@Param('id', ParseUUIDPipe) id: string): Promise<Item> {
     return this.itemsService.findById(id);
   }
 
@@ -51,12 +51,12 @@ export class ItemsController {
 
   // DTO を使用するバージョン
   @Post()
-  create(@Body() createItemDto: CreateItemDto): Item {
+  async create(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return this.itemsService.create(createItemDto);
   }
 
   @Patch(':id')
-  updateStatus(@Param('id', ParseUUIDPipe) id: string): Item {
+  async updateStatus(@Param('id', ParseUUIDPipe) id: string): Promise<Item> {
     return this.itemsService.updateStatus(id);
   }
 

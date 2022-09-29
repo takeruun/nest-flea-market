@@ -1,24 +1,31 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateItemDto } from './dto/create-item.dto';
 import { ItemStatus } from './item-status.enum';
-import { Item } from './items.model';
 import { v4 as uuid } from 'uuid';
+import { Item } from 'src/entities/item.entity';
 
 @Injectable()
 export class ItemsService {
+  constructor(
+    @InjectRepository(Item)
+    private itemsRepository: Repository<Item>,
+  ) {}
+
   private items: Item[] = [];
 
-  findAll(): Item[] {
-    return this.items;
+  async findAll(): Promise<Item[]> {
+    return await this.itemsRepository.find();
   }
 
-  findById(id: string): Item {
-    const found = this.items.find((item) => item.id === id);
+  async findById(id: string): Promise<Item> {
+    const found = await this.itemsRepository.findOneBy({ id });
     if (!found) {
       throw new NotFoundException();
     }
 
-    return this.items.find((item) => item.id === id);
+    return found;
   }
 
   // create(item: Item): Item {
@@ -26,24 +33,31 @@ export class ItemsService {
   //   return item;
   // }
 
-  create(createItemDto: CreateItemDto): Item {
+  async create(createItemDto: CreateItemDto): Promise<Item> {
     const item: Item = {
       id: uuid(),
       ...createItemDto,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       status: ItemStatus.ON_SALE,
     };
-    this.items.push(item);
+
+    await this.itemsRepository.save(item);
+
     return item;
   }
 
-  updateStatus(id: string): Item {
-    const item = this.findById(id);
+  async updateStatus(id: string): Promise<Item> {
+    const item = await this.findById(id);
     item.status = ItemStatus.SOLED_OUT;
+    item.updatedAt = new Date().toISOString();
+
+    await this.itemsRepository.update(item.id, item);
 
     return item;
   }
 
-  delete(id: string): void {
-    this.items = this.items.filter((item) => item.id !== id);
+  async delete(id: string): Promise<void> {
+    this.itemsRepository.delete(id);
   }
 }
