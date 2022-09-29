@@ -8,7 +8,7 @@ const typeOrmDatabaseSource = new DataSource({
   password: 'postgres',
   database: 'postgres',
   entities: ['dist/entities/*.entity.js'], // コンパイル済みのものを指定する
-  migrations: ['dist/src/migrations/*.js'],
+  migrations: ['dist/migrations/*.js'],
 });
 
 export default typeOrmDatabaseSource;
