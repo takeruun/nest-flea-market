@@ -13,8 +13,6 @@ export class ItemsService {
     private itemsRepository: Repository<Item>,
   ) {}
 
-  private items: Item[] = [];
-
   async findAll(): Promise<Item[]> {
     return await this.itemsRepository.find();
   }
