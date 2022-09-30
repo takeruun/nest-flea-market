@@ -1,5 +1,6 @@
 import { ItemStatus } from 'src/items/item-status.enum';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { User } from './user.entity';
 
 @Entity()
 export class Item {
@@ -23,4 +24,12 @@ export class Item {
 
   @Column()
   updatedAt: string;
+
+  // User でどのように Item と紐づいているか
+  @ManyToOne(() => User, (user) => user.items)
+  user: User;
+
+  // 上記で DB に userId が追加されるが typeorm 上はまだないので追加する
+  @Column()
+  userId: string;
 }
