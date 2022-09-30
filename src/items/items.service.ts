@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { CreateItemDto } from './dto/create-item.dto';
 import { ItemStatus } from './item-status.enum';
 import { v4 as uuid } from 'uuid';
 import { Item } from 'src/entities/item.entity';
+import { User } from 'src/entities/user.entity';
 
 @Injectable()
 export class ItemsService {
@@ -31,13 +36,15 @@ export class ItemsService {
   //   return item;
   // }
 
-  async create(createItemDto: CreateItemDto): Promise<Item> {
-    const item: Item = {
+  async create(createItemDto: CreateItemDto, user: User): Promise<Item> {
+    const item = {
       id: uuid(),
       ...createItemDto,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       status: ItemStatus.ON_SALE,
+      user,
+      userId: user.id,
     };
 
     await this.itemsRepository.save(item);
@@ -45,8 +52,12 @@ export class ItemsService {
     return item;
   }
 
-  async updateStatus(id: string): Promise<Item> {
+  async updateStatus(id: string, user: User): Promise<Item> {
     const item = await this.findById(id);
+    if (item.userId === user.id) {
+      throw new BadRequestException('それ。自分の商品やで');
+    }
+
     item.status = ItemStatus.SOLED_OUT;
     item.updatedAt = new Date().toISOString();
 
@@ -55,7 +66,11 @@ export class ItemsService {
     return item;
   }
 
-  async delete(id: string): Promise<void> {
-    this.itemsRepository.delete(id);
+  async delete(id: string, user: User): Promise<DeleteResult> {
+    const item = await this.findById(id);
+    if (item.userId !== user.id) {
+      throw new BadRequestException('それ。自分の商品やない');
+    }
+    return await this.itemsRepository.delete(id);
   }
 }
