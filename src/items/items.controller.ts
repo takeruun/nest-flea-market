@@ -7,7 +7,9 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateItemDto } from './dto/create-item.dto';
 import { Item } from './items.model';
 import { ItemsService } from './items.service';
@@ -51,16 +53,19 @@ export class ItemsController {
 
   // DTO を使用するバージョン
   @Post()
+  @UseGuards(JwtAuthGuard) // JwtAuthGuard で リクエストを検証する
   async create(@Body() createItemDto: CreateItemDto): Promise<Item> {
     return this.itemsService.create(createItemDto);
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   async updateStatus(@Param('id', ParseUUIDPipe) id: string): Promise<Item> {
     return this.itemsService.updateStatus(id);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   delete(@Param('id', ParseUUIDPipe) id: string): void {
     this.itemsService.delete(id);
   }
